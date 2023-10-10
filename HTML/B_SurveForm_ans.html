@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Survey Form</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f2f2f2;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+            .container {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+                padding: 30px;
+                width: 400px;
+                text-align: center;
+            }
+            .container h2 {
+                margin-top: 0;
+                color: #333;
+            }
+            .form-group {
+                text-align: left;
+                margin-bottom: 20px;
+            }
+            label {
+                
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            select {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            input[type="radio"] {
+                margin-right: 5px;
+            }
+            .buttons {
+                display: flex;
+                justify-content: space-between;
+            }
+            button {
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+            }
+            button.reset {
+                background-color: #f44336;
+            }
+            .popup {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+            .popup h2 {
+                margin-top: 0;
+                color: #333;
+            }
+            .popup-content {
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Professional Survey Form</h2>
+            <form id="surveyForm">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country:</label>
+                    <select id="country" name="country" required>
+                        <option value="india">India</option>
+                        <option value="usa">USA</option>
+                        <option value="uae">UAE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <label for="male">Male</label>
+                    <input type="radio" id="male" name="gender" value="male">
+                    <label for="female">Female</label>
+                    <input type="radio" id="female" name="gender" value="Other">
+                    <label for="other">Other</label>
+                    <input type="radio" id="other" name="gender" value="Other">
+                    <!-- I used radio over checkbox for single selection -->
+                </div>
+                <div class="form-group">
+                    <label for="profession">Profession:</label>
+                    <input type="text" id="profession" name="profession" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile Number:</label>
+                    <input type="tel" id="mobile" name="mobile" required>
+                </div>
+                <div class="buttons">
+                    <button type="button" id="submitBtn">Submit</button>
+                    <button type="button" class="reset" onclick="resetForm()">Reset</button>
+                </div>
+            </form>
+        </div>
+    
+        <div class="popup" id="popup">
+            <h2>Survey Form Submission</h2>
+            <div class="popup-content" id="popupContent"></div>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    
+        <script>
+            const surveyForm = document.getElementById('surveyForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const popup = document.getElementById('popup');
+            const popupContent = document.getElementById('popupContent');
+    
+            submitBtn.addEventListener('click', () => {
+                // for validate and collect form data
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const dob = document.getElementById('dob').value;
+                const country = document.getElementById('country').value;
+                const genderCheckboxes = document.querySelectorAll('input[name="gender"]:checked');
+                const profession = document.getElementById('profession').value;
+                const email = document.getElementById('email').value;
+                const mobile = document.getElementById('mobile').value;
+    
+                // Checking for all fields are filled or not 
+                if (!firstName || !lastName || !dob || !country || genderCheckboxes.length === 0 || !profession || !email || !mobile) {
+                    alert('Please fill in all the required fields.');
+                    return;
+                }
+    
+                // for summary message
+                const genderValues = Array.from(genderCheckboxes).map(checkbox => checkbox.value).join(', ');
+                const summary = `
+                    <p><strong>First Name:</strong> ${firstName}</p>
+                    <p><strong>Last Name:</strong> ${lastName}</p>
+                    <p><strong>Date of Birth:</strong> ${dob}</p>
+                    <p><strong>Country:</strong> ${country}</p>
+                    <p><strong>Gender:</strong> ${genderValues}</p>
+                    <p><strong>Profession:</strong> ${profession}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Mobile Number:</strong> ${mobile}</p>
+                `;
+    
+                // for display the summary in the popup form
+                popupContent.innerHTML = summary;
+                popup.style.display = 'block';
+    
+                //for reset the form
+                surveyForm.reset();
+            });
+    
+            function resetForm() {
+                surveyForm.reset();
+            }
+    
+            function closePopup() {
+                popup.style.display = 'none';
+            }
+        </script>
+    </body>
+    </html>
+    
